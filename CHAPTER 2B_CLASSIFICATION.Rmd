@@ -1,0 +1,99 @@
+---
+title: "CHAPTER 2_CLASSIFICATION"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document 
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+head(mtcars)
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+**CLASSIFICATION**
+
+In contrast to regression, sometimes you want to see if a given data point is of a categorical nature instead of numeric. before, we were given a numeric input and calculated a numeric output through a simple regression formula. In the mtcars data set, each car is given a 0 or 1 label to determine whether it has an automatic transmission as defined by the column name . A car with an automatic has a value 1, whereas a manual transmission car has a value of 0. We need to rely on logistic regression model to help classify whether new efficiency data belongs to either the automatic or manual transmission groups. In this case, we will use a logistic regression algorithm.
+
+```{r}
+
+split_size=0.8
+sample_size=floor(split_size*nrow(mtcars))
+```
+
+
+We set a seed for reproducibility
+
+```{r}
+set.seed (123)
+```
+
+We get a list of row indices that we are going to put in our training data.
+```{r}
+train_indices<-sample(seq_len(nrow(mtcars)), size=sample_size)
+```
+
+We then split the training and test data by setting the training data to be the rows that contain those indices, and the test data is everything else.
+
+
+
+```{r}
+train<-mtcars[train_indices,]
+test<-mtcars[train_indices,]
+```
+```
+
+
+```{r}
+
+plot(x=mtcars$mpg, y=mtcars$am, xlab="Fuel Efficiency (miles per gallon)", ylab="Vehicle transmission type (0=automatic, 1=Manuel)")
+
+```
+We have a slightly different question to answer this time: How is the fuel efficency related to a car's transmission type?
+Logistic regression is diffferent than linear regression in that we get discrete outputs instead of continuous ones. Before, we could get any number as a result of our regression model, but with our logistic model, we should expect a binary outcome for the transmission type; it either is an automatic transmission, or it is not. The approach here is different, as well.
+
+First, we need to load the caTools library:
+
+```{r}
+
+library(caTools)
+
+```
+
+This library has a function ofr logistic regression: LogitBoost. First, we need to to give the model the label against which we want to predict as well as the data that we want to use for training the model:
+
+```{r}
+train<-mtcars[train_indices,]
+label.train=train[,9]
+Data.train=train[,-9]
+
+```
+We can read the syntax of train[,-9] as follows: "The data we want is the mtcars dataset that we split into a training set earlier, except column number 9."
+
+```{r}
+model=LogitBoost(Data.train,label.train)
+Data.test=test
+Lab=predict(model,Data.test,type="raw")
+data.frame(row.names(test),test$mpg,test$am,Lab)
+```
+
+Walking through the preceding steps, we first set the label and data by picking the columns that represented each.
