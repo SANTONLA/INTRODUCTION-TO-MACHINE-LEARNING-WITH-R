@@ -1,0 +1,90 @@
+---
+title: "Chapter 2C_Supervised Clustering Methods"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+```{r}
+plot(iris)
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(iris)
+```
+
+
+Clustering is when you have a set of data and want to define classes based on how closely they are grouped. Sometimes, groupings of data might not be immediately obvious, and a clustering algorithm can help you find patterns where they might otherwise be difficult to see explicitly.
+
+Clustering can be used both, in a supervised and unsupervised case.One of the most popular clustering models is the kmeans algorithm.
+
+Let's examine the iris dataset by looking at the plot of petal width as a function of petal lenght.
+
+```{r}
+data("iris")
+library("data.table")
+dfiris<-data.table(iris)
+plot(x=iris$Petal.Length,Y=iris$Petal.Width,xlab="Petal Lenght",ylab="Petal Width")
+```
+What if we want to try to find three distinct groups in which to classify this dataset? it seems at first sight as there are two different groups.
+
+```{r}
+data=data.frame(iris$Petal.Length,iris$Petal.Width)
+dfdataKmeans<-kmeans(data,2)
+
+plot(x=iris$Petal.Length,y=iris$Petal.Width,pch =dfdataKmeans$cluster,
+     xlab="Petal Length",ylab="Petal Width")
+
+points(dfdataKmeans$centers,pch=8,cex=2)
+```
+We can see how the alorityhm works by splitting the data into two major groups. In the lower left is one cluster, denoted by the small triangles, and in the upper right there is another cluster labeled with circular data points. We see two big asterisks that mark where the cluster centers have finally stopped iterating.
+
+Let's use one more cluster, to help make a little more sense of the data:
+
+```{r}
+data=data.frame(iris$Petal.Length,iris$Petal.Width)
+dfdataKmeans<-kmeans(data,3)
+
+plot(x=iris$Petal.Length,y=iris$Petal.Width,pch =dfdataKmeans$cluster,
+     xlab="Petal Length",ylab="Petal Width")
+
+points(dfdataKmeans$centers,pch=8,cex=2)
+```
+Now, there are tree clusters in total wieht three differnet centers to the data. This is where you need to use a gut intuition to determine the appropriate level of fitting to the data. Too few clusters and the data is underfit. Too many clustes and you have the opposite rpblem:theres far too much structure to make sense of simply.
+
+```{r}
+
+par(mfrow=c(1,2))
+
+plot(x=iris$Petal.Length,y=iris$Petal.Width,pch=dfdataKmeans$cluster,xlab="Petal Length",ylab="Petal Width",main="Model Output")
+
+plot(x=iris$Petal.Length,y=iris$Petal.Width,pch=as.integer(iris$Species),
+     xlab="Petal Lenght",ylab="Petal Width",main="Actual Data")
+
+```
+Because we hav species data against wich to test, we can compare our model output left, with our actual data on the right.
+
+We can see the same data represented in tabular format, called a confusion matrix:
+
+```{r}
+table(dfdataKmeans$cluster,iris$Species)
+```
+
+You can read this confusion matrix with the output clusters as the rows, and the actual values from the data as the columns. 
+
+For cluster1, there are 48 versicolor and 4 virginica plantas.
+For cluster2, there are only setosa plants.
+For cluster3, there are 2 versicolor and 46 virginica.
+
+
+
+

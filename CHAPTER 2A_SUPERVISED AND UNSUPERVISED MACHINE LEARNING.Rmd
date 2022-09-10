@@ -1,0 +1,108 @@
+In the universe of machine learning algorithyms, there are two major types: supervised and unsupervised.
+
+Supervised learning models, data are already labelled.
+
+Unsupervised learning models, data are unlabelled.
+
+SUPERVISED MODELS: Regression, Classification and Mixed.
+
+##1- Regression.
+
+These models are very common and it's likely that you encountered one in high school math classes. They are primarily used for looking at how data evolves with respect to another variable (e.g. time) and examining what you can do to predict values in the future.
+
+Regression line is one form which we fit to data that ha an x and a y element. We then use an equation to predict what the corresponding output, y, should be for any given input, x. This always done on numeric data.
+
+let's take a look at an example regression problem:
+```{r}
+head(mtcars)
+```
+
+The mtcars dataset. it contains data about 32 cars from a 1974 issue of Motor trend magazine. We have 11 features.
+The next figure plots efficiency of the cars(mpg) in the ddtaset as a function of their engine size, or displacement (disp) in cubic inches:
+```{r}
+plot(y=mtcars$mpg, x=mtcars$disp, xlab="Engine Size (cubic inches)", ylab="Fuel Efficiency(miles per Gallon")
+```
+We can see from the plot that the fuel efficiency decreases as the size of the engine increases. However, if you have some new engine for which you want to know the eefficiency, the plot, doesn't really give you an exact answer. For that, you need to build a linear model:
+
+```{r}
+model<-lm(mtcars$mpg~mtcars$disp)
+coef(model)
+```
+The regression modeling is of the form y=mx+b, where the output y is dtermined from a given slope m, intercept b, and input data x.So the model looks like the following:
+
+Y=25.59985476-0.041215X
+
+```{r}
+
+coef(model)[2]*200+coef(model)[1]
+
+```
+You can repeat this with any numerical input in which you're interested.
+
+TRAINING AND TESTING DATA
+
+Before we jump into the other major real of supervised learning, we need to ring up the topic about training and testing data. As we've seen with simple linear regression modeling thus far, we have a model that we can use to predict future values. Yet, we know nothing about how accurate the model is for the moment. Our way to determine the accuracy of the model is to look at the R-squared value from the model.
+
+```{r}
+summary(model)
+```
+The accuracy parameter that's most important to us at the moment is the Adjusted R-squared value. This value tells us how linearly correlated the data is; the closer the value is to 1, the more likely the model output is governed by dta that's almost exactly a straight line with some kind of slope value to it.
+
+There is an issue with the model being trained on all the data, then being tested on the same data. What we want to do, in order to ensure an unbiased amount of error, is to split our starting dataset into a training dataset and test dataset.
+
+Normally, 80% training data and 20% test data. We always want more training data than test data.:
+
+```{r}
+split_size=0.8
+sample_size=floor(split_size*nrow(mtcars))
+```
+
+
+We set a seed for reproducibility
+
+```{r}
+set.seed (123)
+```
+
+We get a list of row indices that we are going to put in our training data.
+```{r}
+train_indices<-sample(seq_len(nrow(mtcars)), size=sample_size)
+```
+
+We then split the training and test data by setting the training data to be the rows taht contain those indices, and the test data is everything else.
+
+
+
+```{r}
+train<-mtcars[train_indices,]
+test<-mtcars[train_indices,]
+```
+
+What we want to do now is to build a regression model using only the training data. We then pass the test data values into it to gest the model outputs.
+
+```{r}
+```
+We calculate a new linear model on the training data using lm().
+
+```{r}
+model2<-lm(mpg~disp,data=train)
+```
+We form a dataframe from our test data's disp column.
+
+```{r}
+new.data<-data.frame(disp=test$disp)
+```
+
+We make predictions on our test set and store that in a new column in our test data.
+```{r}
+test$output<-predict(model2,new.data)
+```
+
+We compute a root-mean-square error (RMSE)term. We do this by taking the difference between our model output and the known mpg efficiency, squaring it, summing up those squares, and dividing by the total number of entries in the data set.
+```{r}
+sqrt(sum(test$mpg-test$output)^2/nrow(test))
+```
+
+
+
+

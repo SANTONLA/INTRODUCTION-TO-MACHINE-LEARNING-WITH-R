@@ -1,0 +1,62 @@
+---
+title: "Chapter 2D_Mixed Methods"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+There are many machine learning algorithms in R, and some are focused entirely on regression, whereas others are focused entirely on classification. But there's a third class that can utilize both. Some of these methos can use regression to help inform a classification scheme, or data can e first taken as albels and used to cosntrain regression models.
+
+**TREE-BASED MODELS**
+
+A tree is a structure that has nodes and edges. For a decision tree, at each node we might have a value against which we split in order to gain some insight from the data.
+
+```{r}
+library(party)
+tree<-ctree(mpg~.,data=mtcars)
+```
+
+This is best explained visually by looking at the following figure:
+
+```{r}
+plot(tree)
+```
+
+The figure demonstrates a plotted conditional inference tree. We are plotting engine fuel efficiency(mpg),but we're using all features in the dataset to build the model insted of just one. The output is a distribuition of the fuel efficiency as a function of th emajor features that influence it. In this case, the features that are most important to mpg are disp(the engine displacement) and wt(the car's weight).
+
+At node 1, there is a plit for cars that weight 2.32 tons and thos that weitgh more. For the cars that weigh more, we split further on the engine displacement. Notice that for each feature there is a statistical p-value, which deermines how satatisticlly relevant it is. The closer the p-vallue is to 0.05, or greater, the less useful or relevant it is. In this case, a p-value of almost exactly 0 is very good.
+
+If we try to use this new data strucutre for prediction, the first thing that should pop up is that you are looking at the entire dataset instead of just the training data. to show the tree structure for the training data first:
+
+```{r}
+
+
+split_size=0.8
+sample_size=floor(split_size*nrow(mtcars))
+```
+
+
+We set a seed for reproducibility
+
+```{r}
+set.seed (123)
+```
+
+We get a list of row indices that we are going to put in our training data.
+```{r}
+train_indices<-sample(seq_len(nrow(mtcars)), size=sample_size)
+train<-mtcars[train_indices,]
+test<-mtcars[train_indices,]
+tree.train<-ctree(mpg~.,data=train)
+plot(tree.train)
+```
+
+By looking at just the training data, you have a slightly different picture in that the tree depends only on the car's cylinders. In the following example, there are only two classes instead of the tree as before.
+
+```{r}
+test$mpg.tree<-predict(tree.train,test)
+test$class<-predict(tree.train,test,type="node")
+data.frame(row.names(test),test$mpg,test$mpg.tree,test$class)
+```
+
+This chunk of code does both a regression and a classification test in tow easy lines of code. Firs, it takes the familiar predict() function and applies it to the entirely o the test data and the stores it as a column in the test data. Then, it performs the same procedure, but adds the type="node" ooption the predict function to get a class out. It then sticks them all together in a single data frame.
