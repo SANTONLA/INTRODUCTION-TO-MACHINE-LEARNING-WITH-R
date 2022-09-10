@@ -8,7 +8,7 @@ It will help you gain a solid foundation in machine learning principles.
 Using the R programming and then move into more advanced topics such as neural networks and tree-based methods.
 
 Once you develop a familiarity with topics such a the difference between regression and classification models, 
-you'll be able to solve an array of machine learning problems. Author Scott V. burger provides seeral examples
+you'll be able to solve an array of machine learning problems. Author Scott V. burger provides several examples
 to help you build a working knowledge of machine learning.
 
 We will  learn:
