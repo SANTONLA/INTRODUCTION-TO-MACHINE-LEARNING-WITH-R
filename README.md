@@ -1,9 +1,7 @@
 # INTRODUCTION-TO-MACHINE-LEARNING-WITH-R
 👋 Hi, This is @SANTONLAR
 
-👀
-
-This is a repository with the exercises that appear on the book "Introduction to machine learning with R".
+👀This is a repository with the exercises that appear on the book "Introduction to machine learning with R".
 It will help you gain a solid foundation in machine learning principles. 
 Using the R programming and then move into more advanced topics such as neural networks and tree-based methods.
 
