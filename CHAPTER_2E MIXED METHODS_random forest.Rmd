@@ -1,0 +1,18 @@
+---
+title: "Chapter 2D_Mixed Methods_Random Forest"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+Random forest aren't as easily describabl in model form a a simple y=mx+b equation or a simple tree that has a few nodes in it. 
+However, we can easily show how the error in the model evolves over the course of how many trees we introduce into the model.
+```{r}
+library(randomForest)
+
+mtcars.rf<-randomForest(mpg~.,data=mtcars,ntree=1000,keep.forest=FALSE, importance=FALSE)
+
+plot(mtcars.rf,log="y",title="")
+```
+
+
+The figure shows the constraining of error in a random forest algorithm with 1000 trees used. This is as if you had 1000 friends playing the movie guessing game for recommendations. You can see that the error goes down with the more trees that you use, and is minimal at around the n=500 area.
