@@ -1,0 +1,34 @@
+---
+title: "NEURAL NETWORKS"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+NEURAL NETWORKS
+
+A neural network, as its name implies, takes its computational form from the way neurons in a iological system work. In essence, for a given list of iputs, a neural network performs a number of processing stps before returning an output. The complexity in Neural Networks comes in how many fo the processign steps there are, and how complex each particular step might be.
+
+This might seem a little overwhelming at first, but we can explain it rather simply mathematically. the weights we have are: -20+15*x1+17*x2. If X1 it TRUE, it's a 1, otherwise a 0. We then solve the equation and pass the final value through the sigmoid. We repeat this for all compitanation of our input variables.
+
+THis code example uses the iris dataset that is also bulti in with R.
+
+```{r}
+set.seed(123)
+library(nnet)
+iris.nn<-nnet(Species~.,data=iris,size=2)
+```
+This code uses the nnet()function with the familiar operator that we've been using with our previous examples. The size=2 option tells us that we are using two hidden layers for computation, which must be explicitly specified. The output that we see are iteratios of the network.
+
+After the neural network has finally converged, we can use it for prediction.
+
+```{r}
+table(iris$Species,predict(iris.nn,iris,type="class"))
+```
+
+The result in the confusion matrix are the reference iris species of floweres acrross the top and the predicted iris species of flowers going p and down th table. So, we see the neural network performed perfectly for classifying the data of the setosa species, but missed one classification for the versicolor and virginica species, respectively. A perfect mahcine learning model would have zeroes for all the off-diagonal elements, but this is a pretty good for an illustrative example.
+

@@ -1,0 +1,32 @@
+---
+title: "CHAPTER2_SUPPORT VECTOR MACHINES"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Support Vector macchines, or SVMs,are another algorithm that you can use for both regression and classificaiton. Oftentimes, it is introduced as a simpler or faster corolary to a neural network. SVMs work in a manner that's similar in many respects to logistic regression. The idea is that we are taking data and trying to find a plane or a line that can separate the data into different classes.
+
+Suppose that you have n features in your data and m observations, or rows. If n is much greater tahn m(e.g, n=1000, m=10) you would want to use a logistic regressor. 
+If you have the opposite (e.g. n=10, m=1000), you might want to use an SVM instead.
+
+Alternatively, you can use a neural network for either case, but it might be considerated slower to train than one of these specific algorithms.
+
+You can do SVM classsification in a very similar manner to neural network classifcation, like we saw previously:
+
+```{r}
+
+library(e1071)
+iris.svm<-svm(Species~.,data=iris)
+table(iris$Species,predict(iris.svm,iris,type="class"))
+
+```
+The results here for SVM classification look to be very similar to the nnet() function's results. The only difference here is taht the predicted number of versicolor species of flowers differed by one compared to our nnet() classifier.
+
+These two algorithms compete with each other for dominance relatively frequently. One criticism of neural networks is that they can be compatitionally expensive at scale or slow depending on the complexity of the calculation. SVMs can be quicker in some cases. On the flip side, deep neural neworks can represent more "intelligent"functions compared to the simplier SVM architecture. Neural networks can handle multiple inputs, whereas SVMs can handle only one at a time.
+
+
