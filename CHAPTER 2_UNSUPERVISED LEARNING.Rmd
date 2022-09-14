@@ -1,0 +1,42 @@
+---
+title: "UNSUPERVISED LEARNING"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+So far, with supervised learning algorithms, we've taken a set of data, broken it into a training and a test set, trained the model, and thn evaluated its performance with the test data. Unsupervised learning algorithms take a different approach in that they try to define the overall structure of the data. In principle, these won't have a test set against which to evaluate model's performance.
+
+The most common form of unsupervised learning is clustering. 
+
+#UNSUPERVISED CLUSTERING METHODS.
+
+In this unsupervised version of clustering, you are going to take data that has no explicit categorical label and try to cateogorize them yourself. If yuo generate some random data, you don't really know how it will cluster up. You can perform the usual kmeans clustering here to see how the data should be classified:
+
+```{r}
+x<- rbind(matrix(rnorm(100,sd=0.3),ncol=2),matrix(rnorm(100,mean=1,sd=0.3),ncol=2))
+
+colnames(x)<-c("x","y")
+plot(x)
+```
+What we've done here is generate a random set of data that is normally distributed into two groups. In this case, it might be alittle tougher to see where the exact groupings are, but luckily, the kmeans algorithim can help designate wich points belong to which group:
+
+
+```{r}
+c<-kmeans(x,2)
+plot(x,pch=c$cluster)
+```
+Randomly distributed data points with clustering classificaion labels applied.
+
+However,because the dataset has no explicit label tagged to it prior to applying the kmeans classification, the best you can do is to label future data points according to the clustering centers.
+
+```{r}
+c[2]
+```
+Row 1 denotes the x,y coordinates of the firts cluster, and likewise for row2. Any point that you add to the dataset that is closer to either of these cluster centers will be labeled accordingly.
+
+
