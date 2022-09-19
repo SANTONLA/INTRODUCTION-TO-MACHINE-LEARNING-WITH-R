@@ -1,0 +1,39 @@
+Using the iris dataset, we can test some of these sampling techniques using R code:
+#simple random sample
+```{r}
+iris.df<-data.frame(iris)
+
+sample.index<-sample(1:nrow(iris.df),nrow(iris)*0.75,replace=FALSE)
+head(iris[sample.index,])
+```
+
+This code chunk does a simple random sample of the iris dataset by first generating the indices by which you need to subset your iris data. In this case, we randomly selected five 
+ç+s of data without replacement. Replacement is the option by which, if enabled, when you randomly draw out a row from your data, you have the chance of drawing that same row again. By default, this option is turned off in the sample() function in R, as is the case with most sampling functions you see int e programming world.
+
+#Stratified sampling
+
+For this we need the fifer package and the stratified() function from it. There is an error in library and I cannot install it.
+
+With stratified sampling, though, you can specify which particular strata that you want to sample over. If you are sampling over mnay strata, you generally want to start with the features that vary the leaast and then work your way upward. The features with the lowest variance in the iris dataset are sepal.width and petal.width
+
+
+#SYSTEMATIC SAMPLING
+
+For systematic sampling, you can write a simple function that selects every nth row sequentially given some random initialization number:
+
+```{r}
+
+sys.sample=function(N,n){
+  k=ceiling(N/n)
+  r= sample(1:k,1)
+  sys.samp=seq(r,r+k*(n-1),k)
+}
+systematic.index<-sys.sample(nrow(iris),nrow(iris)*0.75)
+summary(iris[systematic.index,])
+
+```
+This code chunk defines the systematic sampling function and then runs that on the iris data. For this example, we ran it by giving the number of rows so we could get specified indices against which to subset, but the results look pretty similar to waht you've seen thus far.
+
+
+
+
