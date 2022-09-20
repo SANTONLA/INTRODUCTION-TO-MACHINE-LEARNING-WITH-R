@@ -1,0 +1,105 @@
+TRAINING AND TESTING
+
+When building a predictive model, you need to o through phases of validation to ensure that you can trust its results. You might have seen machine learning models using a trin-and-test methodology. This is when you take some data, sample a majority of it into a training set, and keep what's left over for a test set. We typically do a 70/30 split of the data into the training and test subsets, but it is not uncommon to see 80/20 splits, as well.
+
+What you accomplish by doing this is to effectively simulate the model working by first running it on data taht you already have, before throwing completely new data at it. There are two major assumptions that we work with when doing these training/test splits:
+
+1.- The data is a fair representation of the actual processes that ou want to model.(i.e. the subset accurately reflect the population)
+2.- The processes that you want to model are relatively stable over time and that model built with last month's data should accurately reflect next month's data.
+
+ROLES OF TRAINING AND TEST SETS
+
+it is the training set that you use for model training. The role of the training set of data is to provide a platform upon which the model of you choice goes about its mathematical way of determining coefficients or whatever it might do under the hood. The role of the test data is to see how well that model stacks up against real data.
+
+Why make a test set?
+
+1-. It is just a solid way of validating that data. Being able to see that the model performs poorly ahead of time is valuable in and of itselt. That insight can inform you that you just need to tweak parameter X by a samll amount to fit it, for example.
+
+2.- The other valuable need for a test set is that some machine learning algorithms actually depend on one to exist in the firs place. For example, classification and regression trees (CARTs) can be so flexible in therir modelling capabilities that, if the tree is large enough, ou can often get misleading predicitons.The test set acts not only as a way to validate the data, but as a way to select which form of th emodel you need, depending on the alorithm in play.
+
+TRAINING AND TEST SETS_REGRESSION MODELLING
+
+We can best illustrate the need for train/test splits of your data by working through some simple regression examples. 
+
+```{r}
+set.seed(123)
+x<-rnorm(100,2,1)
+y<-exp(x)+rnorm(5,0,2)
+plot(x,y)
+
+linear<-lm(y~x)
+abline(a=coef(linear[1],b=coef(linear[2],lty=2)))
+
+```
+The following output is the result of the code prior to figure.
+
+```{r}
+summary(linear)
+```
+This example uses 100% of the simulated data as its training set and looks at the model performance. For this particular view, a multiple R-squared of 0.74 is not great. Let's try a version that splits the data by our standard 70/30 random sampling and see how it differs.
+
+```{r}
+data<-data.frame(x,y)
+data.samples<-sample(1:nrow(data),nrow(data)*0.7,replace=FALSE)
+training.data<-data[data.samples,]
+test.data<-data[-data.samples,]
+```
+Next, aplly the linear model on the training data
+
+```{r}
+train.linear<-lm(y~x, training.data)
+```
+
+Now that you have a trained model, let's compare the model's output values to actual values. You can do this by using the predict() funciton in R, which takes the train.linear object and applies it to whatever data you supply it to it. because your handi test data is available, you can use that to compare:
+
+```{r}
+
+train.output<-predict(train.linear,test.data)
+
+```
+
+You've now used your test data, which has the same underlying behaviouor as the training data, to pass through your model and get some results. We will be using a test metric called the root-mean-square error, or RMSE
+The RMSE says that you take the output values that the model has provided for the training data imput, subtract those by the y values that you have in the test data, square the values, dive those by the total number of observations n, sum put all the values, and, finally, take the square root. Here's what the code looks like:
+
+```{r}
+
+RMSE.df=data.frame(predicted=train.output,actual=test.data$y,SE=((train.output-test.data$y)^2/length(train.output)))
+
+```
+
+```{r}
+head(RMSE.df)
+```
+```{r}
+sqrt(sum(RMSE.df$SE))
+```
+Consider the resultant value of 6.94 as this model's error score. To see how good this number is, you must compare it to another RMSE value. We can run this same logic on a function fit o fone higher degree and see what kind of RMSE you get out as the end result.
+
+```{r}
+
+train.quadratic<-lm(y~x^2+x,training.data)
+quadratic.output<-predict(train.quadratic,test.data)
+
+RMSE.quad.df=data.frame(preicted=quadratic.output,actual=test.data$y,SE=((quadratic.output-test.data$y)^2/length(train.output)))
+
+head(RMSE.quad.df)
+
+```
+```{r}
+sqrt(sum(RMSE.quad.df$SE))
+```
+The natural next step is to increase the polynomial degree even further and see how that affects the RMSE value:
+
+```{r}
+train.polyn<-lm(y~poly(x,4),training.data)
+
+polyn.output<-predict(train.polyn,test.data)
+
+RMSE.polyn.df=data.frame(predicted=polyn.output,actual=test.data$y,
+                         SE=((polyn.output-test.data$y)^2/length(train.output)))
+head(RMSE.polyn.df)
+```
+```{r}
+sqrt(sum(RMSE.polyn.df$SE))
+```
+
