@@ -12,10 +12,11 @@ to help you build a working knowledge of machine learning.
 We will  learn:
 
 - To explore the machine learning algorithms for supervised and unsupervised cases.
-- Understand machine learning algorithims for supervised and unsupervised cases.
+- Understand machine learning algorithms for supervised and unsupervised cases.
 - Examine statistical concepts for designing data for use in models.
 - Dive into linear regression models used in business and science.
 - Use single-layer and multilayer neural networks for calculating outcomes.
 - Look at how tree-based models work, including popular decision trees.
 - Get a comprehensive view of the machine learning ecosystem in R.
 - Explore the powerhouse of tools available in R's caret package.
+
