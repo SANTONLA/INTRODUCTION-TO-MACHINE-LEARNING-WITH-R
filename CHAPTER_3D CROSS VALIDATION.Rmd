@@ -1,0 +1,48 @@
+---
+title: "3d_Cross validation"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+So far, we've talked about how just running a model on 100% of your data could yield a result that doesn't generalize well to new incoming data. This was our motivation for splitting the data we start with into a training set, which usually takes about 70% of the data and a test set that comprises the rest.
+
+Cross-validation is a statistical technique by which you take your entire dataset, split it into a number of sMAll train/test chunks, evaluate the error for each chunk, and then average those final errors. The simple 70/30 train test split we did earlier in this chapter is called a simple "holdout" cross-validation technique. There are many other sstatistical cross-validation techniques, however, and with R having its basis in statistical design, you can model many different types of cross-validation.
+
+#K-fold Cross-validation
+
+This is more commonly used. This involves taking your dataset and splitting it into k chunks. For each of these chunks, you then split the data into a smaller train/test set and then evaluate that individual chunk's error. Afterwards, you simply take the average. In R, you can use the cut function to every split up a given dataset's indices for subsetting. You then simply loop over the applied folds of your data, doing the train/test split for each fold.
+
+```{r}
+set.seed(123)
+x<-rnorm(100,2,1)
+y=exp(x)+rnorm(5,0,2)
+data<-data.frame(x,y)
+
+data.shuffled<-data[sample(nrow(data)),]
+
+folds<-cut(seq(1,nrow(data)),breaks=10,labels=FALSE)
+
+errors<-c(0)
+for (i in 1:10){
+  fold.indexes<-which(folds==i,arr.ind=TRUE)
+  
+  test.data<-data[fold.indexes,]
+  training.data<-data[-fold.indexes,]
+  
+  train.linear<-lm(y~x,training.data)
+  train.output<-predict(train.linear,test.data)
+  errors<-c(errors,sqrt(sum(((train.output-test.data$y)^2/length(train.output)))))
+}
+
+errors[2:11]
+
+mean(errors[2:11])
+
+```
+
+
+
+
+
+
