@@ -1,0 +1,58 @@
+---
+title: "CHAPTER 4B_MULTIVARIATE REGRESSION"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Suppose that you want to build a more robust model of fuel efficiency with more variables built into it. Fuel efficiency of a vehicle can be acomplex phenomenom with many contributing factors other than engine size, so finding all of the features that are responsible for driving the behaviour of the odel in the most accurate fashion is here you want to utilize regression as you have been, but in a multivariate context the mathematical form changes to:
+
+y=b+m1x1+m2x2+m3x3+....(...)
+
+where x1,x2,x3, and so forth, are different features in the model, such as a vehicle's weight, engine size, number of cylinders, and so on. Because the new objective is to find coefficients for a model of the form y=f(x1,x2,x3,...(...)), you need to revisit th ecall to the lm() function in R:
+
+
+```{r}
+lm.wt<-lm(mpg~disp+wt,data=mtcars)
+summary(lm.wt)
+```
+This code extends the linear modeling from earlier to include the vehicle's weight in the model fitting procedure. In this case, what you see is that the adjusted R-squared has gone up slightly from 0.709 when you fit a model of just the engine size, to 0.7658 after including the engine weight in the fit. However, notice that the statistical relevance of the previous feature has gone down considerably. Before, the p-value of the wt feature was far below the 0.05 threshold for a p-value to be significant; now it's 0.06. This might be due to the vehicle fuel efficiency being more sensitive to changes in vehicle weight than engine size.
+
+If you want to extend this analysis further, you can bring in another feature from the dataset and see how the R-sqared of the model and p-values of the coefficients change accordingly:
+
+
+```{r}
+lm.cyl<-lm(mpg~disp+wt+cyl,data=mtcars)
+summary(lm.cyl)
+```
+This code takes the same approach as before, but adds the engine's cylinder count to the model. Notice that the R-squared value has increase yet again from 0.7
+9 to 0.8147. However, the statistical relevancy of the displacement in the data is basically defunct, with a p-value 10 times the threshold at 0.53322 insted of closer to 0.05. This tells us that the fuel efficiency is tied more to the combined feature set of vehicles weight and number of cylinders than it is to the engine size. You can rerun this analysis with just the statistically relevan features:
+
+```{r}
+lm.cyl.wt<-lm(mpg~wt+cyl,data=mtcars)
+summary(lm.cyl.wt)
+```
+By removing the statistically irrelevant feature from the model, you have more or less preserved the R-squared accuracy at 0.8185 vs 0.8147, while maintaining only relevant features to the data.
+
+You should take care when adding features to the data, however. In R, you can easily model a response to all the features in the data by calling the lm() function with the following form:
+
+```{r}
+lm.all<-lm(mpg~.,data=mtcars)
+summary(lm.all)
+```
+This syntax creates a linear model with the dependent varable mpg being modeled against everything in the dataset, as denoted by the . mark in the function call The problme with this approach, however, is that you see very little statistical value in the coefficientes of the model. Likewise, the standard error for each of the coefficients is very high, and thus pinnign down an exact value for the coefficients is very difficult.
+Instead of this top-down approach to seeing which feautres are the most important in the dataset, it is better to approach it from the bottom up as we have done thus far. Although the theme of feature slection itself is a very broad topic-one which we explore in depth with other machine learning algorithis-we can mitigate some of these probles in a couple of ways:
+
+CAREFUL SELECTION OF FEATURES:
+
+Pick features to add to the model one at a time and cut the onew that are statistically insignificant. we've accomplished this in the preceding code chunks by adding one parameter at a time and checking to see whether the p-value of the model output  for that parameter is statistically significant.
+
+REGULARIZATION
+
+Keep all the features but mathematically reduce the coefficients of the less imporant ones to minimize their impact of the model.
+
+```{r}
