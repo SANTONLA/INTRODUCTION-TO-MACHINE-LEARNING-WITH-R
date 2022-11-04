@@ -5,26 +5,83 @@ date: "`r Sys.Date()`"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
-## R Markdown
-
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r cars}
 summary(cars)
 ```
+Polynomial regression is simply fitting a higher degree function to the data. Previously, we've seen fits to our data along the following form:
+y=b+m1x1+m2x2+m3x3
 
-## Including Plots
+Polynomial regression differs from the simpole linear cases by having multiple degrees for each feature in the dataset. The form of which could be represented as follows:
 
-You can also embed plots, for example:
+Y=b+mx2
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+The following example will help with our reasoning(figure4-2):
+
+
+```{r}
+pop<-data.frame(uspop)
+summary(pop)
+pop$uspop<-as.numeric(pop$uspop)
+pop$year<-seq(from=1790,to=1970, by=10)
+
+plot(y=pop$uspop,x=pop$year,main="United States Population From 1790 to 1970", xlab="Year",ylab="Population")
+
+
+```
+Here, we have a built-in dataset in R that we'vetweaked slightly for demonstration purposes. Normally the uspopo is a time-series object that has its own plotting criteria, but here we've tuned it to plot just the data points. This data is the population of the United States in 10 year periods from 1790 to 1970. Let's begin by fitting a linear model to the data:
+
+```{r}
+lm1<-lm(pop$uspop~pop$year)
+summary(lm1)
+```
+This simple linear fit of the data seems to work pretty well. The p-values of the estimates are very low, indicating a good statistical significance. Likewise, the R-Sqared values arae both very good. However, the residuals show a pretty wide degree of variability, ranging as much as a difference of 36, as demonstrated in Figure 4-3.
+
+```{r}
+
+plot(y=pop$uspop, x=pop$year, main="United States Population from 1790 to 1970", xlab="Year", ylab="Population")
+abline(a=coef(lm1[1]),b=coef(lm1)[2],lty=2,col="red")
+
+```
+The dotted line fit from the linear model seems to do ok. If fits some of the data better than others, but it's pretty clear from the data that it's not exactly a linear relationship. Moreover, we know from intuition that population over tiem tends to be more of an exponential shape than one that's a straight line. What you want to do next is to see how a model of a higher degree stacks up against the linear case, which is the lowest-order degree polynomial that you can fit:
+
+```{r}
+lm2<-lm(pop$uspop~poly(pop$year,2))
+
+summary(lm2)
+
+```
+This code calls the lm() function again, but this time with an extra parameter round the dependent variable, the poly() function. This function takes the date data and ccomputes an orthogonal vector, which is then scaled appropriately. By default, the poly() funciton doesn't changes the values of the date data, bu you ca use it to see if it yields any better results than the lower-order fit that you did previously. Recall that the linear fit is technically a polynomial, but of degree1.In an equation, here's the resultant model fit.
+
+y=b+m1x1^2+m2x1
+
+Let's slowly walk through the summary() output first. Looking at the residual output gives us a bit of relief: no residuals in the range of 30! Smaller residual are always better in terms of model fit. The coefficients table now has three entries.one for the intercept, one of the first-degree term, and now one for the second-degree term. When you called poly(poop$year,2), you instructed R that you want a polynomial of the date data with the hihest degree being 2. Going back to the coefficients table, you can see that all of the p-values are statistically significant, which is also a good indication that this is a solid model fit to your data.fi 4.4
+
+```{r}
+plot(y=pop$uspop,x=pop$year,main="United States Population from 1790 to 1970",xlab="Year",ylab="Population") 
+
+pop$lm2.predict=predict(lm2,newdata=pop)
+
+lines(sort(pop$year),fitted(lm2)[order(pop$year)],col="blue", lty=2)
+```
+From figure, it looks pretty obvious that the higher degree polynomial (in case a quadratic equation) fits the data better. Clearly using higher degree polinomials works better than lower degree ones, right? What happens if you fit a third degree polynomial? Or something higher still? I'll bet that  if you use a sixth-degree polynomial you would have a very accurate model indeed! What immediately leaps out it that the simple linear fit that you had earlier fit the data as best it could, but higher second-degree polynomial (i.e.,a simple quadratic) fit better. A better way to distinguish the difference between higher-order polynomial fits is by looking at plots of each model's residuals, which you can see in figure
+
+```{r}
+
+plot(resid(lm1),main="Degree 1", xlab="Sequential year",ylab="Fit Residual")
+plot(resid(lm2),main="Degree 2",xlab="Sequential year", ylab="Fit Residual")
+
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Recall that a residual is the vertical distance between a data point and the fitted model line. A model that fits the data points exactly should have a residuals plot as close to a flat line as possible. In the case of your linear fit, the scale of the residuals plot is much larger than the rest, and you can see that the liner fit has some pretty residula distance at its start, halfway point, and end. This is not and ideal model. On the other hand, the higher-degree polynomials seem to do pretty well. The scale of their residual plots are much nicer, but the one that really stands out is the sixth degree polynomial fit at the nd. The residuals plot is pretty much zero to start, and then it becomes a littl more error-prone.
+
+This is all well and good, but it might be easier to rank the model fith by looking at their residuals numberically:
+
+```{r}
+c(sum(abs(resid(lm1))),sum(abs(resid(lm2))))
+
+```
+This code sums the residual plots by absolute value of the residual. If you just take the raw sum of the residuals, you get an inaccurate picture because some residuals might be negative. So the total residual for the linear fit is uantitatively bad compared to the rest of the models, with the sixth-degree polynomial being the clear winner in terms of the best fit to the data points.
+
+But is the best fit to the data points actually the best model? We must take into account the ideas of overfitting and underfitting the data. The linear model fit to the data in the previous case would be a good example of an underfit scenario. learly there's some structure in the data that isn't being explained by a simple linear fit. On the other hand, a model can be overfit if it is too specific to the data presented and offers little explanatory power for any new data that might come into the system. This is the risk you run by increasing the degree of polynomial models.
+```{r}
