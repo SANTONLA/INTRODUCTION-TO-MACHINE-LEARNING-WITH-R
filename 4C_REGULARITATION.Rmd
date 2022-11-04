@@ -1,0 +1,25 @@
+---
+title: "4C_REGULARIZATION"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+summary(mtcars)
+```
+
+Regularization can be atough concept mathematically, but in principle, it's fairly straightforward. The idea is that you want to include as many fo the features in your data as you can squeeze into the final model. The more features, the better you can explain all the intricacies of the dataset. The catch here is that the degree to which each feature explains part of the model, afer regularization is applied, can be quite differente.
+
+Through the use of regularization, you can make your model more succinct and reduce the noise in the dataset that might be coming from the features that have littte impact on what you are trying to model against.
+
+Let's see what the linear model for the mtcars dataset would look like if we included all the features. 
+
+mpg=12.3-0.11cyl+0.01disp-0.02hp+0.79drat-3.72wt+0.82qsec+0.31vs+2.42am+0.66gear-0.20carb
+
+According to this linear equation, fuel efficiency is most sensitive to the weight of the vehicle(-3.72wt), given that this one has the largest coefficient. However, most of these are all within an order of magnitud or so to one another. Regularization would keep all of the features, but the less important ones would have their coefficientes scaled down much further.
+
+To utilize this regularization technique, you call a particular type of regression modeling, known as a lasso regression.
+
+The regularization part of the regression scales the coefficients according to how much actual impact they have on the model in a more statistical fashion. In some cases, this can result in some features being scaled dwon to such a low value that they are approximated as zero. The most important feature before the cahnge to a lasso regression was the vehicle's weigh, wt, which has remained unchanged as far as its relative importance.
