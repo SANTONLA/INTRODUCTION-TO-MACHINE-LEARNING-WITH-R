@@ -1,0 +1,63 @@
+---
+title: "CHAPTER 4G_LOGISTIC REGRESSION"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars}
+summary(cars)
+```
+
+#LOGISTIC REGRESSION
+
+Thus far we've considered regresssion models in terms of taking some kind of numerci data to which we want to fit some kind of curve so that we can use it for predictive purposes. Linear regression takes some sort of numeric data and renders an equation like y=mx+b out. Linear regression can also have multiple inputs and we could have an equation like y=b+mx1+m2x2+(...). Further, these types of numerical regression models can be turned into nonlinear cases such as y=b+mx1+mx2+mx3. All of thee have their own use cases eir own use cases and are totally depend on the data we're working with and ow we strategize about the kind of accuracy for which we want to optimize.
+
+All of these so far have ingested some numeric input and given us a numeric output. What if, instead, we wanted a "yes" or "no"outcome form our data? What if we were trying to do something like determined whether our input data was of a positive or negative result? In this case, we would be taking in the basis for the clasification end of our regression modeling. Logiistic regression is a particular tupe of classification end of our regression modeling. Logistic regression is a particular type of classification and relatively simple enough to be used as an introductor example. Logistic regression, in contrast to linear regression, finds the point at which the data goes forom one kind of classificaion to another instead of trying to fit all the individual data points themselves.
+
+#The motivation for classification
+
+Suppose that your are trying to diagnose patients to determine whether they have a malignant tumor. Let's look at the code and the resulting plot in fig.7:
+
+```{r}
+
+data<-data.frame(tumor.size<-c(1,2,3,4,5,6,7,8,9,20),
+                 malignant<-c(0,0,0,0,1,1,1,1,1,1))
+
+tumor.lm<-lm(malignant~tumor.size, data=data)
+
+plot(y=data$malignant,x=data$tumor.size,main="Tumor Malignancy by size",
+     ylab="Type(0=benign,1=cancerous)",xlab="Tumor Size")
+abline(a=coef(tumor.lm[1]),b=coef(tumor.lm[2]))
+coef(tumor.lm)
+
+```
+```{r}
+summary(tumor.lm)$r.squared
+```
+This code creates a dataset of tumor sizes from 1 to 20 and classifies whether they are malignant, with a benign or noncancerous tumor being clasified as 0, and a malignant or cancerous tumor being labeled as 1. A naive instinct might be to slap a regression model on this data and see what the equation output is. With this approach, you would have an equation such as the following: tumor malignancy = 0.061 x tumor size+0.204
+
+The poor fit of the R-squared at 0.406 suggest that we could obtain a more accurate model. Additionally, you should question the logical assesment of what it means to have a tumor that is 0.2 malignant when they are logged in the data as being either malignant or not with no room in between. This would also not make much sense with the mtcars dataset if we had something modeled agains transmission type. What wuld a 0.2 transmission be if 0 was manual and 1 was an automatic?
+We need to rething this approach. Instead of fitting a normal mathematical funciton, we need to tfit something called a decission boundary to the data.
+
+#The decision boundary
+
+The decision boundary is simply a line in the sand of our data that says "anything on this side is classified as X and anything on the other side is classified as Y". The figure revisit the plot of tumor sizes and whehter they're malignant. You can clearly see that any tumor that's greater in size than 5 always seems to be malignant:
+
+```{r}
+
+plot(Y=data$malignant,x=data$tumor.size,main="Tumor Malignancy by Size",ylab="Type(0=bening, 1=canceroous)",xlab="Tumor Size")
+abline(v=4.5)
+
+```
+Logistic regression establishes the boundary against which you can classify data. The boundary in fig. 8 shows that any tumor size greater than 4.5 is malignant, whereas anything less than that is benign.
+
+
+
+
+
