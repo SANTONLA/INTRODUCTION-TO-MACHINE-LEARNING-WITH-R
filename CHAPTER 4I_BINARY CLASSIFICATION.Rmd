@@ -1,0 +1,39 @@
+---
+title: "CHAPTER 4I_Binary Classification"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+Everything we've done so far in terms of classification has been on binary data: the tumor is either malignant or benign. The figure looks at another example in which we determine the classes base on the data's distribution:
+
+```{r}
+plot(iris$Sepal.Length~iris$Sepal.Width, main="Iris Flower Sepal Lenth vs Sepal Width",
+     xlab="Sepal Width",ylab="Sepal lenght")
+```
+In the figure, there are a bunch of data points and what appears to be two different classes of plants. There looks to be a grouping o fdata pionts at the bottom of the plot that seem to be more separated than the others. You can fit a logistic regression model to this data and find the equation for the line that makes your decission boundary. Any pionts below that threshold  will be classified as one type, and all the points above th eline will be classified as another type.
+
+This exercise uses a generalized linear model, given by the function glm(). Its usage is more flexible than that of the standard linear model function lm() in that you can use it for classification purposes:
+
+```{r}
+iris.binary<-iris
+iris.binary$binary<-as.numeric(iris[,5]=="setosa")
+
+iris.logistic<-glm(binary~Sepal.Width + Sepal.Lenght,data=iris.binary,family="binomial")
+
+iris.logistic
+```
+THe output form this method provides some coefficients and intercepts that don't look totally right. You need one extra step to calculate the slope and intercepts of the decision boundary this way. Recall for a moment how you used the sigmoid function g(z)=1/(1+ez).
+z is a function with the following form:
+
+z=O0+=Ox1+Ox2
+
+You can rewrite this equation and solve for our X2 value accordingly:
+
+X2>
+
