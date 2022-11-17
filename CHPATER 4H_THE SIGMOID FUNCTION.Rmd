@@ -1,0 +1,57 @@
+---
+title: "CHAPTER 4H_THE SIGMOID FUNCTION"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r cars}
+summary(cars)
+```
+
+#The sigmoid Function
+
+The way logistic regression (as well as many other types of classification algorithms) work is based on the mathematical underpinnings of the sigmoid function. The sigmoid function takes the following mathematical form:
+
+h(x)=1/1+e^-x
+
+The figure shows what the plot looks like:
+
+```{r}
+e<-exp(1)
+curve(1/(1+e^-x),-10,10,main="The Sigmoid Function", xlab="Input", ylab="Probability")
+```
+This function is used in logistic regression to classify data. On its own, the function takes in some numeric value that we are interested in and maps it to a probability between 0 and 1. We might be tempted to just plug in some of the values from our earlier example into the sigmoid function and see what the output is. If we did, like setting x=1, for example, we would get h(1)=0.73, or about a 73% chance a tumor is malignant if our input is 1. yet our classification system is 0 for benign and 1 for malignant. the length=1 input yields a result of 0.73, which is incorrect.
+
+Instead, we need to pass a set of weighted parameters to the logistic regressor to classify data. On its own, the function takes in some numeric value that we are interested in and maps it to a probability between 0 and 1. We might bee tempted to just plug in some of the values from our earlier example into the sigmoid function and see what the output is. If we did, like setting x=1, for example, we would get h(1)=0.73, or about a 3% chance a tumor is malignant if our input is 1. Yet our classification system is 0 for benign and 1 for malignant. The length=1 input yields a result of 0.73, which is incorrect.
+
+Instead, we need to pass a set of weighted parameters to the logistic regressor. Because we have only one dependent variable at the moment (keeping in mind that the y-axis for our classification output is not an input variable), we should expect to pass a function to our logistic regressor that has the form similar to the following:
+g(length)=O+O1length
+
+A priori, we don't know what the weights are just yet. What we do want is for them to be chosen such that our g(x) function, when passed to our sigmoid function, will give us a classification that looks reasonable to what we see in our data:
+
+```{r}
+
+lenghts<-c(1,2,3,4,5,6,7,8,9,10)
+t1=-4.5
+t2=1
+g=t1+t2*lengths
+s=1/(s+e^-g)
+data.frame(lenghts,g,s)
+
+```
+This code chunk takes the input tumor lengths, which range from 1 to 10, and picks two weights of O=4.5 and O=1. In practice, your would either need to experiment with picking values for the weights and seeing how the outputs react, or crunch them through an algorithm that gives you the answer. The preceding code provides the answer as an end rest. They are then used as the weighs for the function g(x)that is then passed to the sigmoid. the table in the code presents the resultant classification of the data as s. A tumor of length 1, when passed through the input function g(x), gives a result of -3.5. this value, when passed to the sigmoid function, yields a result that's pretty close to zero. This means that a tumor of length 1 has a very low probability of being malignant, as demonstrated in the next figure:
+
+```{r}
+
+plot(y=s, x=lenghts,pch=1, main="Sigmoid function inputs and rounding estimates",
+     xlab="Tumor lengths", ylab="Probability of class 1 typification")
+points(y=round(s),x=lenghts,pch=3)
+
+```
+
