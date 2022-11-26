@@ -1,0 +1,64 @@
+---
+title: "Logisitc Regression with Caret"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+#LOGISTIC REGRESSION WITH CARET
+
+The caret package makes doing logistic regression problems very easy for more complex examples than what we have been doing thus far. Using caret is fairly straightforward, though for some particular machine learning methods, some optimitzations and tunings might be warrranted to achieve the beest results prossible. Following is an example of how you can perform an operation with caret:
+
+```{r}
+library(caret)
+```
+
+```{r}
+Train<-createDataPartition(GermanCredit$Class, p=0.6,list=FALSE)
+                           
+training<-GermanCredit[Train,]
+testing<-GermanCredit[-Train,]
+```
+
+```{r}
+mod_fit<-train(Class~Age+ForeignWorker+Property.RealEstate+Housing.Own+CreditHistory.Critical,data=training,method="glm",family="binomial")
+```
+
+```{r}
+predictions<-predict(mod_fit,testing[,-10])
+table(predictions,testing[,10])
+```
+This simple example uses data from the GermanCredit dataset and shows how you can build a confusion matrix from a caret training object. In this case, the fit doesn't seem super great, because about 50% of the data seems to be classified incorrectly. Although caret offers some great ways to tune whatever particular machine learning method you are interested in, it's also quite flexible at changing machine learning methods. By simply editing the method option, you can specify one of the other 12 logistic regression algorithms to pass to the model, as shown here:
+
+```{r}
+
+mod_fit<-train(Class~Age+ForeignWorker+Property.RealEstate+Housing.Own+CreditHistory.Critical,data=training,method="LogitBoost",family="binomial")
+
+predictions<-predict(mod_fit,testing[,-10])
+table(predictions,testing[,10])
+
+```
+#SUMMARY
+
+In this chapter, we looked at a coouple different ways to build basic models between simple linear regression and logistic regression.
+
+##LINEAR REGRESSION
+
+Regression comes in two forms: standard linear regression, which you might have encountered early on in your mathematics classes, and logistic regression, which is very different. R can create a linear model with ease by using the lm()function. In tandem with R's formular operator, ~, you can build a simple y0mx+ regression equation by doing something like lm(y~x). From this linear model object, you can extract a wealth of infomation regarding coefficients, statistical validity, and accuracy. You can do this by using the summary() function, which can tell you how statistically valid each coefficient in your model is. For those that aren't statistically useful, you can safely remove them from your model.
+
+Regression models can be more advanced by having more features. You can model behaviour llike fuel efficiency as a function of a vehicle's weight, but you can also incorporate more things into your model, such as a vehicle's transmission type, how many cylinders its engine might have, and so forth. Multivariate regression modeling in R follows the same practice assingle-feature regression The only difference is that there are more features listed in the summary() view of your model.
+
+However, simply adding more features to a model doesn't make it more accurate by default. You might need to employ techniques like regularization, which takes a dataset that has lots of features and reduces the impact of those that aren't statistically as important as others. This can help you to simplify your model drastically and boost accuracty assesstements, as well.
+
+Sometimes, theere might be nonlinear relationships in the data that require polynomial fits. A regular linear model is of the form y=b+mx+mx+....(...). You can fit polynomial behaviour to your models by passing a poly()function to the lm() function; for example, lm(y~poly(x,2)). This creates a quadratic relationship in theh data. It's important to not go too crazy with polynomial degrees, however, because you run the risk of fitting your data so tightly that any new data that comes in might have high error estimates that aren't true to form.
+
+##LOGISTIC REGRESSION
+
+In machine learning, there are standard regression techniques that stimate continuous values like numbers, and classification techniques that estimate discrete values like data types. In a lot of cases, the data can have discrete values like a flower's species. If you try the standard linear regression techniques on these datasets, you'll end up with very disingenuous relationships in your data that are better suited for classification schemes.
+
+Logistic regerssion is a classification method that findds a boundary that separates data into discrete classes. It does this by passing the data through a sigmoi function that maps the actual value of the data to a binary 1 or 0 case. That result is then passed through another equation that yields weighs to assign probabilities to the data. You can use this to determine how likely a given data point is of a certain class.
+
+You can also use logistic regression to draw decision boundaries your data. 
