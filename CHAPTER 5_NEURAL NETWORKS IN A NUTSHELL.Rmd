@@ -1,0 +1,49 @@
+---
+title: "NEURAL NETWORKS IN A NUTSHELL"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In chapter 2, we briefly touched on the topic of neural networks in our exploration of the machine learning landscape. A neural network is a set of equations that we use to calculate an outcome. They aren't so scary if we think of them as a brain made out of compter code. In some cases, this is closer to reality than we should expect from such a cartoony eample. Depending on the number of features we have in our data, the neural network almost becomes a "black box". In principle, we can display the equations that make up a neural network, but at a certain level, the amount of information becomes too cumbersome to intuit easily.
+
+Neural Networks are used far and wide in industry largely due to their accuracy. Sometimes, there are trade-offs between having a highly accurate model, but slow computation speeps, owever. Therefore, it's best to try multiple models and use neural networks only if they work for your particular dataset.
+
+##SINGLE-LAYER NEURAL NETWORKS.
+
+In chapter2, we looked at the development of and ADN gate. An AND gate follows logic like this:
+
+```{r}
+x1<-c(0,0,1,1)
+x2<-c(0,1,0,1)
+logic<-data.frame(x1,x2)
+logic$AND<-as.numeric(x1&x2)
+logic
+```
+If you have two 1 inputs (both TRUE), your output is 1 (TRUE). however, if either of them, or both, are 0 (FALSE), your output is also 0 (FALSE).This computation is somewhat similar to our analyssis of logistic regression. In chapter 4, we covered how the sigmoid function works. Recall that the sigmoid function is given by g(z)=f(1+ez), and that z is a function of the form z=O+O1X1+O2x2
+
+For the logic gate, all you need to do is pick and choose weights =0,=1,=2 so hat when x1=1 and x2=1, the result of Z when you pass it through the sigmoid function g(z) is also 1. Previously, you picked weights of =0=20,=1=15, and =2=17 to satisfy the equation. the way the neural network goes about computing those weights is an even more mathy process, but it follows the same sort of logic for what we used in logistic regression.
+
+neural networks come in many different flavors, but the most popular ones stem from single or multilayered neural networks. So far, you've seen an example of a single-layer network, for which we take some input (1,0), process it through a simoid function, and get some output(0). You can in fact, chain together these computational steps to form more interconnected and complicated models by taking the output and passing it into furhter computational layers.
+
+Figure presents an example of the AND gate with R code this time:
+
+```{r}
+install.packages("neuralnet",dependencies=TRUE)
+library(neuralnet)
+
+AND<-c(rep(0,3),1)
+
+binary.data<-data.frame(expand.grid(c(0,1),c(0,1)),AND)
+
+net<-neuralnet(AND~Var1+Var2,binary.data,hidden=0,
+               err.fct="ce",linear.output=FALSE)
+plot(net,rep="best")
+
+```
+
+This is a simple neural network
