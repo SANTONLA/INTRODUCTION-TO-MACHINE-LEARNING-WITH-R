@@ -1,0 +1,43 @@
+---
+title: "CHAPTER 5B_BUILDING A SIMPLE NEURAL NETWORK BY USING R"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+
+library(neuralnet)
+set.seed(123)
+AND<-c(rep(0,3),1)
+binary.data<-data.frame(expand.grid(c(0,1),c(0,1)),AND)
+net<-neuralnet(AND~Var1+Var2,binary.data,hidden=0,
+               err.fct="ce",linear.output=FALSE)
+plot(net,rep="best")
+```
+
+Before we jump into the math, let's first break down the visualization presented in the figure above, a diagram of a neural network that's about as simple as it can get. There is one input layer (the empty circles on the left) and one output layer(the empty circle on the right). Often, there is another vertical layer of circles that indicates a compute layer. In this case, the output layer is the compute layer. The numbers on the lines indicate the computationally crunched best weights to use for the model. The number attached to the "1" in the circle at the top is the the weight from the bias node. The bias node is just the additive constant for the now-familiar sigmoid function you used in the logistic regression examples. So, in a sense, this is just a different way to represent a logistic regression analysis at a neural network's simplest form. The end result of which is a classification scheme for the data that has labels 1 or 0.
+
+In R, there's really only one neural network library that has built-in functionality for plotting neural networks. In practice, most of the time plotting neural networks is more complicated than it's worth, as we will demonstrate later. In complex modeling scenarios, neural network diagrams and mathematics become so cumbersome that the model itself more or less becomes a trained black box. If your manager were to ask you to explain the math behind a complex neural network model, you might need to block our an entire afternoon and find the largest whiteboard in the building.
+
+The neural library has built-in plotting functionality, however, and in the previous case, you are plotting the neural network that has been determined to have the lowest error in this case. The number of steps are the number of iterations that have gone on in the background to tune the particular output for its lowest error.
+
+the code shown in figure above, passes a similar table of data fro binary.data into the neural net() function from the package of the same name.07.75519The result you get out would be an equation that has weights 0=11.86048,01=7.75382, and =2=7.75519.
+
+So, if your boss is truly eager to see what the status of your neural network modeling procedure is, you would be delighted and can say that you've finished and have the model ready to go. If your boss asks for details on how exactly the thing works you can say that it takes in two inputs Var1 and Var2 and inputs them into the equation:
+
+z=-11.96048+7.75382Var1+7.75382Var2
+
+you then pass that equation through a sigmoid function g(z)=1/(1+e^-z)and get an out output.
+
+You can check the neuralnet()function's output by using the prediction() function:
+
+```{r}
+prediction(net)
+
+```
+In the first table are the input variables and what the neural network thinks the answer is. As you can see, the answers are pretty close to what they should be, as given by the table below it. So far, you have successfully performed a neural network model with a single layer. that is, all of the inputs went into a single processing point as shown in the figure. These processing points are almost always sigmoid functions but in some rare instances, they can be passed through a hyperbolic tan function, tanh(x9), to achieve similar result.
