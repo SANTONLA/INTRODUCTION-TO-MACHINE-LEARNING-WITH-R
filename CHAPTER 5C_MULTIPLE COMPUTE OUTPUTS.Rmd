@@ -1,0 +1,36 @@
+---
+title: "Chapter 5c_Multiple compute outputs"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+As alluded to earlier, neural networks can take multiple inputs and provide multiple outputs. If, for example, you have two functions that you want to model via neural networks, you an use R's formula operator ~ and the + operator to simply add another response to th elefthand side of the equation during modeling, as shown in the figure.
+
+```{r}
+library(neuralnet)
+
+set.seed (123)
+AND<-c(rep(0.7),1)
+OR<-c(0,rep(1,7))
+binary.data<-data.frame(expand.grid(c(0,1),c(0,1),c(0,1)),AND)
+net<-neuralnet(AND + OR ~Var1+Var2+Var3,binary.data, hidden=0,linear.output=FALSE)
+plot(net,rep="best")
+```
+Neural Networks can be more complex than logistic regression in terms of multiple compute outputs.
+
+We can model our AND and OR functions with two equations given by the outputs in the Figure.
+
+AND=19.4+7.5XVAR1+7.6XVAR2+7.6XVAR3.
+OR=10.3+22.3XVAR1+21.8VAR2+21.9*VAR3
+
+We can see out output in the same way as before with just one function
+
+```{r}
+prediction(net)
+```
+The neural networks seem to be performing quite nicely!
