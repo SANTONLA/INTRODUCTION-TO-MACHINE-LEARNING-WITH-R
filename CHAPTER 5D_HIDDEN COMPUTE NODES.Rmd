@@ -1,0 +1,89 @@
+---
+title: "CHAPTER 5D_HIDDEN COMPUTER NODES"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+So far,you have been building neural networks that have no hidden layers. That is to say, the compute layer is the same as the output layer. Here, we show you how adding one hidden layer of computation can help increase the model's accuracy.
+
+Neural networks use a shorthand notation for defining their architecture, in which we note the number of input nodes, followed by a colon, the number of compute nodes in the hidden  layer, another colon, and then the number of output nodes. The architecture of the neural network we built in figure was 
+
+
+3:0:1
+
+An easy way to illustrate this is by diagramming neural network that has 3 inputs, one hidden layer, and one output layer for a 3:1:1 neural network architecture:
+
+```{r}
+
+library(neuralnet)
+set.seed(123)
+
+AND<-c(rep(0,7),1)
+binary.data<-data.frame(expand.grid(c(0.1),c(0.1),c(0,1)),AND,OR)
+net<-neuralnet(AND~Var1+Var2+Var3, binary.data, hidden=1,err.fct="ce",linear.output=FALSE)
+plot(net,rep="best")
+```
+In this ccase, we have inserted a computation step before the output. Walking through the diagram from left to right, there are theree inputs for a logic gate. These are crunched into a logistic regression function in the middle, hiddle layer. The resultant equation i the pumped out to the compute layer for us to use for our AND function. The math would look something like this:
+
+H1=8.57+3.6xVar1-3.5xVar2-3.6xVar33
+
+Which we would then pass through a logistic regression function:
+
+g(H-1)=1/1+e^-(8.57+3.6Var1-3.5Var2-3.6Var3)
+
+Next, we take that output and put it through another logistic regression node using the weights calculated on the output node:
+
+AND=5.72-13.79*g(h)
+
+One major advantage of using a hidden layer with some hidden compute nodes is that it makes the neural network more accurate. However, the more complex you make a neural network model, the slower it will be and the more difficult it will be to simply explain it with easy-to-intuit equations. More hidden compute layers also means that you run the risk of overfitting your model, such as you've seen already with traditional regression modeling systems.
+
+Although the numbers tied to the weights of each compute node shown in Figure are now becoming pretty illegible, the main takeaway here is the error and number of computation steps. In this case, the error has gone down a little bit from 0.033 to 0.027 from the last odel, but you've also reduced the number of cvomputational steps to get that accuracty from 143 to 61. so, not only have you increased the accuracy, but you've made the model computation quicker at the same time. Figure also shows another hidden computation node added to the single hidden layer, just before the output layer:
+
+```{r}
+
+set.seed(123)
+
+net2<-neuralnet(AND~Var1+Var2+Var3, binary.data,hidden=2,err.fct="ce",linear.output=FALSE)
+
+plot(net2,rep="best")
+     
+
+```
+
+Mathematically, this can be presented as two logistic regression equations being fed into a final logistic regression eaquation for our resultant output.
+
+f1=13.64+13.97var1+14.9var2+14.27var3
+
+f2=-7.95+3.24*Var1+3.15*Var2+3.29*Var3
+
+f3=-5.83-1.94*f1+14.09*f2
+
+AND=g(f3)=1/1+e^-(-5.83-1.94*f1+14.09*f2)
+
+The equations are becoming more and more complicated with each increase in the number of hidden compute nodes. the error with two nodes went up slightly from 0.29 to 0.33, but the number of iteration steps the model took to minimize that error was a little bit bette in that it went down from 156 to 143. What happens if you turn the number of compute nodes even higher. Next figures illustrate this.
+
+```{r}
+set.seed(123)
+
+net4<-neuralnet(AND~Var1+Var2+Var3,binary.data,hidden=4,err.fct="ce",linear.output=FALSE)
+
+net8<-neuralnet(AND~Var1+Var2+Var3,binary.data, hidden=8,err.fct="ce",linear.output=FALSE)
+
+plot(net4,rep="best")
+
+plot(net8,rep="best")
+```
+The code in figures uses the same neural network modeling scenario, but the number of hidden computation nodes are increased first to four, and then to eight. The neural network with four hidden computation nodes had a better level of error (just slightly) than the network with only a single hidden node. The error in that case went down from 0.29 to 0.28, but the number of steps went down dramatically from 156 to 58. quite an improvement! However, a neural network with eight hidden computation layers might have crossed into overfitting territory. In that network, error went from 0.29 to 0.34, even though the number of steps went from 156 to 51.
+
+You can apply the same methodology with a multiple outputs, as well, although the plot itself begins to become an unreadable mess at some point, as figure demonstrates:
+
+```{r}
+
+set.seed(123)
+
+net<-neuralnet(AND+OR~Var1+Var2+Var3,binary.data,hidden=6,err.fct="ce",linear.output=FALSE)
+plot(net,rep="best")
+
+```
+
