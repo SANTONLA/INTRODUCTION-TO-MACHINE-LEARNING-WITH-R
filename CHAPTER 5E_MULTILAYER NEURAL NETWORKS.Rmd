@@ -1,0 +1,75 @@
+---
+title: "CHAPTER 5E_MULTILAYER NEURAL NETWORKS"
+author: "Silvia Antón"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+All the neural networks thus far that we've played around with have had an architecture that has one input layer, one or zero hidden layers (or compute layers), and one output layer.
+
+We've used 1:1:1 or 1:0:1 neural networks for some classification schemes already. In those examples, we were trying to model classifications based on the AND and OR logic gate functions:
+
+```{r}
+x1<-c(0,0,1,1)
+x2<-c(0,1,0,1)
+logic<-data.frame(x1,x2)
+logic$AND<-as.numeric(x1&x2)
+logic$OR<-as.numeric(x1|x2)
+logic
+```
+As figure demonstrates, we can repreesnt tis table as two plots, one of which shows the input values and colors those according to the type of logic gate output we use:
+
+```{r}
+logic$AND<-as.numeric(x1&x2)+1
+logic$OR<-as.numeric(x1|x2)+1
+
+par(mfrow=c(2,1))
+
+plot(x=logic$x1,y=logic$x2,pch=logic$AND,cex=2,
+     main="Simple Classification of Two Types",
+     xlab="x",ylab="y",xlim=c(-0.5,1.5),ylim=c(-0.5,1.5))
+     
+plot(x=logic$x1,y=logic$x2,pch=logic$OR,cex=2,
+     main="Simple Classification of Two Types",
+     xlab="x",ylab="y",xlim=c(-0.5,1.5),ylim=c(-0.5,1.5))
+
+```
+these plots use triangles to signify when outputs are 1 (or TRUE), and circles for which the outputs are 0(or FALSE). In our discussion on logisti regression, we were basically solving for some kind of line that woul separate this data into red dots on one side and black dots on the other. Recall that this separating line is called a decision boundary and had always been a straight line. However, we can't use a straight line to try to classify more complicated logic gates like an XOR or XNOR.
+
+In tabular form, as we've seen with the AND and OR functions, the XOR and XNOR functions take inputs of x1,x2, and give us a numeric output in much the same way, as demonstrated in the next figure.
+
+```{r}
+
+x1<-c(0,0,1,1)
+x2<-c(0,1,0,1)
+
+logic<-data.frame(x1,x2)
+logic$AND<-as.numeric(x1&x2)
+logic$OR<-as.numeric(x1|x2)
+logic$XOR<-as.numeric(xor(x1,x2))
+logic$XNOR<-as.numeric(x1==x2)
+logic
+
+```
+
+```{r}
+logic$XOR<-as.numeric(xor(x1,x2))+1
+
+logic$XNOR<-as.numeric(x1==x2)+1
+
+par(mfrow=c(2,1))
+
+plot(x=logic$x1,y=logic$x2,pch=logic$XOR,cex=2,main="Non-linear classification of two types",
+
+xlab="x",ylab="y",xlim=c(-0.5,1.5),ylim=c(-0.5,1.5))
+
+plot(x=logic$x1,y=logic$x2,pch=logic$XNOR,cex=2,main="Non_linear Classification of Two types",
+     xlab="x",ylab="y",xlim=c(-0.5,1.5),ylim=c(-0.5,1.5))
+```
+
+THere is no single straight line that can separate red and black dots on the plots in the figure. If you try to plot a very simple neural network with no hidden layers for an XOR classification, the results aren't especially gratifying, as illustrated in the next figure:
+
