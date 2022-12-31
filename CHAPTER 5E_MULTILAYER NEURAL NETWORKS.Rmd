@@ -21,7 +21,7 @@ logic$AND<-as.numeric(x1&x2)
 logic$OR<-as.numeric(x1|x2)
 logic
 ```
-As figure demonstrates, we can repreesnt tis table as two plots, one of which shows the input values and colors those according to the type of logic gate output we use:
+As figure demonstrates, we can represent this table as two plots, one of which shows the input values and colors those according to the type of logic gate output we use:
 
 ```{r}
 logic$AND<-as.numeric(x1&x2)+1
@@ -72,4 +72,19 @@ plot(x=logic$x1,y=logic$x2,pch=logic$XNOR,cex=2,main="Non_linear Classification 
 ```
 
 THere is no single straight line that can separate red and black dots on the plots in the figure. If you try to plot a very simple neural network with no hidden layers for an XOR classification, the results aren't especially gratifying, as illustrated in the next figure:
+
+```{r}
+logic$XOR<-as.numeric(xor(x1,x2))
+
+set.seed(123)
+
+library(neuralnet)
+
+net.xor<-neuralnet(XOR~x1+x2,logic,hidden=0,err.fct="ce")
+
+prediction(net.xor)
+```
+```{r}
+plot(net.xor,rep="best")
+```
 
